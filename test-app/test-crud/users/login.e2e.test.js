@@ -68,6 +68,7 @@ describe("API - CRUD", () => {
       expect(data.name).toBe(username);
       expect(data.accessToken).toEqual(expect.any(String));
       expect(data.accessToken).toContain(".");
+      expect(data.password).toBeUndefined();
     });
   });
 

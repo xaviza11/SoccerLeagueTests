@@ -44,6 +44,12 @@ describe("API - BFF", () => {
       expect(data.username).toBe(username);
       expect(data.token).toEqual(expect.any(String));
       expect(data.token).not.toContain(".");
+      expect(data.storage.id).toEqual(expect.any(String))
+      expect(data.stats.id).toEqual(expect.any(String))
+      expect(data.password).toBeUndefined();
+      expect(data.stats.elo).toEqual(10000)
+      expect(data.stats.money).toEqual(100000)
+      expect(data.has_game).toEqual(false)
     });
 
     it("should return error when the user name is already registered", async () => {
