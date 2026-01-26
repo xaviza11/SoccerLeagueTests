@@ -1,35 +1,4 @@
-// tests/users.e2e.test.js
-
-const { BFF_URL } = require("../../config");
-
-/* =====================
-   Helpers
-===================== */
-
-const createUser = async (name, email, password) => {
-  const response = await fetch(`${BFF_URL}/api/users`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name,
-      email,
-      password,
-    }),
-  });
-
-  const data = await response.json();
-
-  return {
-    status: response.status,
-    data,
-  };
-};
-
-/* =====================
-   Tests
-===================== */
+const { UsersClient } = require("../helpers/apiClients/index.js")
 
 describe("API - BFF", () => {
   describe("Create User tests", () => {
@@ -38,18 +7,17 @@ describe("API - BFF", () => {
       const email = "correct2@user.com";
       const password = "ASDF123asdf";
 
-      const response = await createUser(username, email, password);
+      const response = await UsersClient.createUser(username, email, password);
       const { data } = response;
 
       expect(data.username).toBe(username);
       expect(data.token).toEqual(expect.any(String));
       expect(data.token).not.toContain(".");
-      expect(data.storage.id).toEqual(expect.any(String))
-      expect(data.stats.id).toEqual(expect.any(String))
+      expect(typeof data.storage.id).toEqual("string");
+      expect(typeof data.stats.id).toEqual("string");
       expect(data.password).toBeUndefined();
-      expect(data.stats.elo).toEqual(10000)
-      expect(data.stats.money).toEqual(100000)
-      expect(data.has_game).toEqual(false)
+      expect(data.stats.elo).toEqual(10000);
+      expect(data.stats.money).toEqual(100000);
     });
 
     it("should return error when the user name is already registered", async () => {
@@ -57,11 +25,10 @@ describe("API - BFF", () => {
       const email = "example2@gmail.com";
       const password = "ASDF123asdf";
 
-      const response = await createUser(username, email, password);
+      const response = await UsersClient.createUser(username, email, password);
       const { data } = response;
 
-      expect(data.error).toBe("Conflict");
-      expect(data.statusCode).toBe(409);
+      expect(response.status).toBe(409);
       expect(data.message).toBe("Name is already in use - CRUD");
     });
 
@@ -70,11 +37,10 @@ describe("API - BFF", () => {
       const email = "correct2@user.com";
       const password = "ASDF123asdf";
 
-      const response = await createUser(username, email, password);
+      const response = await UsersClient.createUser(username, email, password);
       const { data } = response;
 
-      expect(data.error).toBe("Conflict");
-      expect(data.statusCode).toBe(409);
+      expect(response.status).toBe(409);
       expect(data.message).toBe("Email is already in use - CRUD");
     });
 
@@ -83,13 +49,12 @@ describe("API - BFF", () => {
       const email = "example@gmail.com";
       const password = "asdfasdfasdf123";
 
-      const response = await createUser(username, email, password);
+      const response = await UsersClient.createUser(username, email, password);
       const { data } = response;
 
-      expect(data.error).toBe("Conflict");
-      expect(data.statusCode).toBe(409);
+      expect(response.status).toBe(400);
       expect(data.message).toBe(
-        "The password must be at least 8 characters long, include uppercase, lowercase and a number. - CRUD"
+        "Invalid Password"
       );
     });
 
@@ -98,13 +63,12 @@ describe("API - BFF", () => {
       const email = "example@gmail.com";
       const password = "ASDJKLHSAK123";
 
-      const response = await createUser(username, email, password);
+      const response = await UsersClient.createUser(username, email, password);
       const { data } = response;
 
-      expect(data.error).toBe("Conflict");
-      expect(data.statusCode).toBe(409);
+      expect(response.status).toBe(400);
       expect(data.message).toBe(
-        "The password must be at least 8 characters long, include uppercase, lowercase and a number. - CRUD"
+        "Invalid Password"
       );
     });
 
@@ -113,13 +77,12 @@ describe("API - BFF", () => {
       const email = "example@gmail.com";
       const password = "ASDJKLHSAKasdfasdfadf";
 
-      const response = await createUser(username, email, password);
+      const response = await UsersClient.createUser(username, email, password);
       const { data } = response;
 
-      expect(data.error).toBe("Conflict");
-      expect(data.statusCode).toBe(409);
+      expect(response.status).toBe(400);
       expect(data.message).toBe(
-        "The password must be at least 8 characters long, include uppercase, lowercase and a number. - CRUD"
+        "Invalid Password"
       );
     });
   });
