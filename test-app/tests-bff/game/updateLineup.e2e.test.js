@@ -22,10 +22,49 @@ describe("API - BFF", () => {
 
       const players = resData.data.team.players;
 
+      players.forEach((p, i) => {
+        p.isBench ? p.isBench === false : true;
+      });
+
       const r = await GameDataClient.updateLineup(token, players);
 
       expect(r.data.message).toBe("success");
       expect(r.status).toBe(200);
+    });
+
+    it("Should throw error when the player don't own the team.", async () => {
+      const usernameA = "userCorrect134354";
+      const emailA = "userCorrect123423@gmail.com";
+      const passwordA = "ASDF123asdf";
+
+      const usernameB = "userCorrectB4235445";
+      const emailB = "userCorrectB123542@gmail.com";
+      const passwordB = "ASDF123asdf";
+
+      const createFirstPlayer = await UsersClient.createUser(
+        usernameA,
+        emailA,
+        passwordA,
+      );
+
+      const createSecondPlayer = await UsersClient.createUser(
+        usernameB,
+        emailB,
+        passwordB,
+      );
+
+      const wrongToken = createSecondPlayer.data.token;
+
+      const token = createFirstPlayer.data.token;
+
+      const resData = await GameDataClient.retrieveGameData(token);
+
+      const players = resData.data.team.players;
+
+      const r = await GameDataClient.updateLineup(wrongToken, players);
+
+      expect(r.data.message).toBe("Error updating lineup");
+      expect(r.status).toBe(403);
     });
 
     it("Should throw error when token are undefined", async () => {
@@ -42,28 +81,6 @@ describe("API - BFF", () => {
       expect(r.status).toBe(401);
     });
 
-    it("Should throw error when players haven't correct lineup", async () => {
-      const username = "correct312312393749";
-      const email = "correct393712349@user.com";
-      const password = "ASDF123asdf";
-
-      const response = await UsersClient.createUser(username, email, password);
-      const { data } = response;
-
-      const token = data.token;
-      expect(typeof token).toBe("string");
-
-      const responseData = await GameDataClient.retrieveGameData(token);
-
-      responseData.data.team.players[0].position = "Striker";
-
-      const r = await GameDataClient.updateLineup(
-        token,
-        responseData.data.team.players,
-      );
-
-      expect(r.status).toBe(422);
-    });
 
     it("Should throw error when palyers are missing or invalid", async () => {
       const username = "correct3912347863749";
@@ -78,7 +95,7 @@ describe("API - BFF", () => {
 
       const r = await GameDataClient.updateLineup(token, players);
 
-      expect(r.data.message).toBe("Error updating player");
+      expect(r.data.message).toBe("Error updating lineup");
       expect(r.status).toBe(403);
     });
   });
