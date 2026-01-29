@@ -1,4 +1,4 @@
-const { UsersClient } = require("../helpers/apiClients/index.js")
+const { UsersClient } = require("../../helpers/apiClients/index.js")
 
 describe("API - BFF", () => {
   describe("Create User tests", () => {

@@ -1,7 +1,7 @@
 const {
   UsersClient,
   GameDataClient,
-} = require("../helpers/apiClients/index.js");
+} = require("../../helpers/apiClients/index.js");
 
 const { players } = require("../data/players.js");
 

@@ -1,4 +1,4 @@
-const { UsersClient, GameDataClient } =  require("../helpers/apiClients/index.js");
+const { UsersClient, GameDataClient } =  require("../../helpers/apiClients/index.js");
 
 describe("API - BFF", () => {
   describe("Return game data", () => {
