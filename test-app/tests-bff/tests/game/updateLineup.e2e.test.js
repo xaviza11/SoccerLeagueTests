@@ -3,7 +3,7 @@ const {
   GameDataClient,
 } = require("../../helpers/apiClients/index.js");
 
-const { players } = require("../data/players.js");
+const { players } = require("../../data/players.js");
 
 describe("API - BFF", () => {
   describe("update line up", () => {
